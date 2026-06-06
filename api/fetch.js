@@ -12,7 +12,6 @@ export default async function handler(req, res) {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
         'Cache-Control': 'no-cache',
         'Referer': 'https://www.google.com/'
       },
@@ -49,13 +48,11 @@ export default async function handler(req, res) {
 
     const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
     const rawTitle = titleMatch?.[1]?.trim() || '';
-
     const jsonLd = getJsonLd();
 
     const title = getMeta('og:title') || getMeta('twitter:title') || jsonLd?.name || rawTitle;
     const image = getMeta('og:image') || getMeta('twitter:image') || jsonLd?.image?.url || jsonLd?.image || '';
     const brand = getMeta('og:site_name') || jsonLd?.brand?.name || jsonLd?.brand || '';
-    
     let price = getMeta('product:price:amount') || jsonLd?.offers?.price || jsonLd?.offers?.[0]?.price || '';
     let currency = getMeta('product:price:currency') || jsonLd?.offers?.priceCurrency || jsonLd?.offers?.[0]?.priceCurrency || 'USD';
 
@@ -63,7 +60,6 @@ export default async function handler(req, res) {
       const pricePatterns = [
         /itemprop=["']price["'][^>]*content=["']([0-9.,]+)["']/i,
         /"price"\s*:\s*"?([0-9.,]+)"?/i,
-        /class=["'][^"']*price[^"']*["'][^>]*>\s*\$?\s*([0-9,]+\.?[0-9]*)/i,
       ];
       for (const p of pricePatterns) {
         const m = html.match(p);
