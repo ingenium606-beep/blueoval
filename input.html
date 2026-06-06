@@ -202,10 +202,6 @@
 const BOT_TOKEN = '8731170592:AAGc6ICVUm3N7B7BhOpiu9NlRckVy1bT6yA';
 const CHANNEL_ID = '-1003953823996';
 
-const commissionRates = {
-  ArabClicks: 0.075, Admitad: 0.085, AWIN: 0.075, ShareASale: 0.10, Digistore24: 0.45
-};
-
 function updateCharCount(fieldId, countId) {
   const len = document.getElementById(fieldId).value.length;
   const max = fieldId === 'statement' ? 300 : 100;
@@ -282,8 +278,6 @@ async function approveAndPost() {
   const statement = document.getElementById('statement').value.trim();
   const verdict = document.getElementById('verdict').value.trim();
   const sym = currency === 'AED' ? 'AED ' : '$';
-  const rate = commissionRates[network] || 0.075;
-  const perSale = (parseFloat(price) * rate).toFixed(2);
 
   const caption = `#${category}\n\n*${brand ? brand + ' — ' : ''}${name}*\n\n${statement}\n\n_${verdict}_\n\n*${sym}${price}*\n\nBrand: ${brand}\nPrice: ${price}\nCategory: ${category}\nLink: ${link}\nStatement: ${statement}\nVerdict: ${verdict}`;
 
@@ -308,12 +302,6 @@ async function approveAndPost() {
       posted = d.ok;
     }
     if (posted) {
-      const revenueMsg = `✅ Posted to BlueOval\n${brand ? brand + ' — ' : ''}${name} · ${sym}${price} · ${category}\n\n💰 Revenue Estimate\nNetwork: ${network}\nCommission: ${(rate*100).toFixed(1)}%\nEst. per sale: ${sym}${perSale}\nIf 10 buy: ${sym}${(parseFloat(perSale)*10).toFixed(2)}\nIf 50 buy: ${sym}${(parseFloat(perSale)*50).toFixed(2)}\nIf 100 buy: ${sym}${(parseFloat(perSale)*100).toFixed(2)}`;
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHANNEL_ID, text: revenueMsg })
-      });
       showStatus('✓ Posted successfully to BlueOval!', 'success');
       btn.textContent = '✓ Posted!';
     } else {
