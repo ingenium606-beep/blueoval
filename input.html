@@ -83,15 +83,7 @@
   .status-msg.success { background: rgba(29,158,117,0.1); color: var(--success); display: block; }
   .status-msg.error { background: rgba(226,75,74,0.1); color: var(--error); display: block; }
 
-  .revenue-box { background: var(--blue-light); border: 1px solid rgba(10,37,64,0.1); border-radius: 3px; padding: 0.9rem; }
-  .revenue-title { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--blue-mid); margin-bottom: 0.6rem; font-weight: 500; }
-  .revenue-row { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 0.3rem; }
-  .revenue-row span:first-child { color: var(--text-muted); }
-  .revenue-row span:last-child { font-weight: 500; color: var(--blue); }
-  .revenue-scenarios { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
-  .revenue-scenario { flex: 1; background: var(--card-bg); border-radius: 3px; padding: 0.5rem; text-align: center; border: 1px solid var(--border); }
-  .revenue-scenario .sc-label { font-size: 0.6rem; color: var(--text-muted); margin-bottom: 2px; }
-  .revenue-scenario .sc-val { font-size: 0.85rem; font-weight: 500; color: var(--blue); }
+
 </style>
 </head>
 <body>
@@ -176,18 +168,7 @@
     </div>
   </div>
 
-  <!-- REVENUE ESTIMATE -->
-  <div class="revenue-box" id="revenue-box">
-    <div class="revenue-title">💰 Revenue Estimate</div>
-    <div class="revenue-row"><span>Network</span><span id="rev-network">—</span></div>
-    <div class="revenue-row"><span>Commission Rate</span><span id="rev-rate">—</span></div>
-    <div class="revenue-row"><span>Est. per sale</span><span id="rev-per-sale">—</span></div>
-    <div class="revenue-scenarios">
-      <div class="revenue-scenario"><div class="sc-label">10 sales</div><div class="sc-val" id="rev-10">—</div></div>
-      <div class="revenue-scenario"><div class="sc-label">50 sales</div><div class="sc-val" id="rev-50">—</div></div>
-      <div class="revenue-scenario"><div class="sc-label">100 sales</div><div class="sc-val" id="rev-100">—</div></div>
-    </div>
-  </div>
+
 
   <!-- STEP 3: PREVIEW -->
   <button class="preview-btn" onclick="showPreview()">Preview Post</button>
@@ -260,10 +241,6 @@ function updateRevenue() {
   document.getElementById('rev-100').textContent = sym + (perSale * 100).toFixed(2);
 }
 
-document.getElementById('price').addEventListener('input', updateRevenue);
-document.getElementById('network').addEventListener('change', updateRevenue);
-document.getElementById('currency').addEventListener('change', updateRevenue);
-
 function showPreview() {
   const brand = document.getElementById('brand').value.trim();
   const name = document.getElementById('product-name').value.trim();
@@ -286,7 +263,6 @@ function showPreview() {
   document.getElementById('preview-section').style.display = 'block';
   document.getElementById('approve-btn').classList.add('visible');
   document.getElementById('reset-btn').classList.add('visible');
-  updateRevenue();
   document.getElementById('preview-section').scrollIntoView({ behavior: 'smooth' });
 }
 
