@@ -1,7 +1,5 @@
 {
-  "functions": {
-    "api/fetch.js": {
-      "runtime": "edge"
-    }
-  }
+  "rewrites": [
+    { "source": "/api/fetch", "destination": "/api/fetch.js" }
+  ]
 }
