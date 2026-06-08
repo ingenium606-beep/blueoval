@@ -141,16 +141,7 @@
         <option value="digital">Digital</option>
       </select>
     </div>
-    <div class="field">
-      <label>Affiliate Network</label>
-      <select id="network">
-        <option value="ArabClicks">ArabClicks</option>
-        <option value="Admitad">Admitad</option>
-        <option value="AWIN">AWIN</option>
-        <option value="ShareASale">ShareASale</option>
-        <option value="Digistore24">Digistore24</option>
-      </select>
-    </div>
+
   </div>
 
   <!-- STEP 2: YOUR STATEMENT -->
@@ -272,36 +263,49 @@ async function approveAndPost() {
   const price = document.getElementById('price').value.trim();
   const currency = document.getElementById('currency').value;
   const category = document.getElementById('category').value;
-  const network = document.getElementById('network').value;
   const link = document.getElementById('affiliate-link').value.trim();
   const imageUrl = document.getElementById('image-url').value.trim();
   const statement = document.getElementById('statement').value.trim();
   const verdict = document.getElementById('verdict').value.trim();
   const sym = currency === 'AED' ? 'AED ' : '$';
 
-  const caption = `#${category}\n\n*${brand ? brand + ' — ' : ''}${name}*\n\n${statement}\n\n_${verdict}_\n\n*${sym}${price}*\n\nBrand: ${brand}\nPrice: ${price}\nCategory: ${category}\nLink: ${link}\nStatement: ${statement}\nVerdict: ${verdict}`;
+  const caption = `*${brand ? brand.toUpperCase() : ''}*\n\n*${name}*\n\n${statement}\n\n_${verdict}_\n\n*${sym}${price}*`;
+
+  const inlineKeyboard = link ? {
+    inline_keyboard: [[{ text: 'Get It →', url: link }]]
+  } : undefined;
 
   try {
     let posted = false;
     if (imageUrl) {
+      const body = { chat_id: CHANNEL_ID, photo: imageUrl, caption, parse_mode: 'Markdown' };
+      if (inlineKeyboard) body.reply_markup = inlineKeyboard;
       const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHANNEL_ID, photo: imageUrl, caption, parse_mode: 'Markdown' })
+        body: JSON.stringify(body)
       });
       const d = await r.json();
       posted = d.ok;
     }
     if (!posted) {
+      const body = { chat_id: CHANNEL_ID, text: caption, parse_mode: 'Markdown' };
+      if (inlineKeyboard) body.reply_markup = inlineKeyboard;
       const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHANNEL_ID, text: caption, parse_mode: 'Markdown' })
+        body: JSON.stringify(body)
       });
       const d = await r.json();
       posted = d.ok;
     }
     if (posted) {
+      // Save to database so Mini App can display it
+      await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ brand, name, price, currency, category, link, imageUrl, statement, verdict })
+      });
       showStatus('✓ Posted successfully to BlueOval!', 'success');
       btn.textContent = '✓ Posted!';
     } else {
