@@ -666,49 +666,25 @@ async function loadCategory(cat) {
   const body = document.getElementById('cat-body');
   body.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
   try {
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?limit=100`;
-    const res = await fetch(url);
+    const res = await fetch(`/api/products?category=${cat}`);
     const data = await res.json();
-    const items = parsePosts(data, cat);
+    const items = (data.products || []).map(p => ({
+      id: p.id,
+      brand: p.brand || '',
+      name: p.name || '',
+      statement: p.statement || '',
+      verdict: p.verdict || '',
+      price: p.price || '',
+      currency: p.currency || 'USD',
+      link: p.link || '',
+      image: p.imageUrl || null
+    }));
     products[cat] = items;
     document.getElementById('cat-count').textContent = items.length > 0 ? `${items.length} picks` : 'Latest picks';
     renderCategory(cat, items, body);
   } catch(e) {
     renderCategory(cat, [], body);
   }
-}
-
-function parsePosts(data, cat) {
-  if (!data.ok || !data.result) return [];
-  const items = [];
-  data.result.forEach(update => {
-    const msg = update.channel_post || update.message;
-    if (!msg || !msg.text) return;
-    const text = msg.text;
-    if (!text.includes(`#${cat}`) && !text.toLowerCase().includes(cat)) return;
-    const lines = text.split('\n').filter(l => l.trim());
-    const item = {
-      id: msg.message_id,
-      brand: '',
-      name: lines[0] || 'Product',
-      statement: '',
-      verdict: '',
-      price: '',
-      currency: 'USD',
-      link: '',
-      image: msg.photo ? `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${msg.photo[msg.photo.length-1].file_id}` : null
-    };
-    lines.forEach(l => {
-      if (l.startsWith('Brand:')) item.brand = l.replace('Brand:', '').trim();
-      if (l.startsWith('Price:')) item.price = l.replace('Price:', '').trim();
-      if (l.startsWith('Statement:')) item.statement = l.replace('Statement:', '').trim();
-      if (l.startsWith('Verdict:')) item.verdict = l.replace('Verdict:', '').trim();
-      if (l.startsWith('Link:')) item.link = l.replace('Link:', '').trim();
-      if (l.includes('AED')) item.currency = 'AED';
-    });
-    items.push(item);
-  });
-  return items;
 }
 
 function renderCategory(cat, items, body) {
