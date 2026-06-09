@@ -3,20 +3,6 @@
   "sneakers": [
     {
       "brand": "Nike",
-      "name": "Nike Air Force 1 Low Retro",
-      "price": "629",
-      "currency": "AED",
-      "category": "sneakers",
-      "link": "https://www.nike.ae/en/air-force-1-low-retro-mens-shoes/NKIO9557-900.html",
-      "imageUrl": "https://www.nike.ae/dw/image/v2/BDVB_PRD/on/demandware.static/-/Sites-akeneo-master-catalog/default/dw536b9b30/nk/NK_/N/K/I/O/9/5/NK_NKIO9557_900_198731420775_1.jpg?sw=700&sh=700&sm=fit&q=100&strip=false",
-      "statement": "Celebrate soccer's biggest stage with red, white and blue. These AF1s have a star-studded look that honors every shot blocker with the guts to get between the posts.",
-      "verdict": "7/10",
-      "telegramMsgId": 14,
-      "id": "sneakers_1781030149157",
-      "createdAt": 1781030149157
-    },
-    {
-      "brand": "Nike",
       "name": "Nike Structure 26",
       "price": "279.00",
       "currency": "AED",
