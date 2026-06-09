@@ -269,7 +269,17 @@
     padding: 4px 10px;
     border-radius: 2px;
   }
-  .hero-body { padding: 1.2rem 1.2rem 1rem; }
+  .hero-body { padding: 1.2rem 1.2rem 1rem; display: flex; flex-direction: column; }
+  .hero-statement {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 0.8rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
   .hero-brand {
     font-size: 0.65rem;
     letter-spacing: 0.2em;
@@ -285,12 +295,7 @@
     line-height: 1.2;
     margin-bottom: 0.6rem;
   }
-  .hero-statement {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    line-height: 1.7;
-    margin-bottom: 0.8rem;
-  }
+
   .hero-verdict {
     font-size: 0.78rem;
     color: var(--blue);
