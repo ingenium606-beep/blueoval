@@ -3,6 +3,20 @@
   "sneakers": [
     {
       "brand": "Nike",
+      "name": "SB Air Force 1",
+      "price": "629.00",
+      "currency": "AED",
+      "category": "sneakers",
+      "link": "https://www.nike.ae/en/sb-air-force-1-skate-shoes/NKHM8517-200.html",
+      "imageUrl": "https://www.nike.ae/dw/image/v2/BDVB_PRD/on/demandware.static/-/Sites-akeneo-master-catalog/default/dw86d003bc/nk/NK_/N/K/H/M/8/5/NK_NKHM8517_200_198731276761_1.jpg?sw=700&sh=700&sm=fit&q=100&strip=false",
+      "statement": "Comfortable, durable and timeless it's number one for a reason. The classic '80s construction pairs with bold details for style that tracks whether you're on court or on the go.",
+      "verdict": "9/10",
+      "telegramMsgId": 17,
+      "id": "sneakers_1781041288072",
+      "createdAt": 1781041288072
+    },
+    {
+      "brand": "Nike",
       "name": "Air Force 1 Low Retro",
       "price": "629",
       "currency": "AED",
