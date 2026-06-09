@@ -1,19 +1,5 @@
 {
   "fashion": [],
-  "sneakers": [
-    {
-      "brand": "Nike",
-      "name": "Nike Structure 26",
-      "price": "279.00",
-      "currency": "AED",
-      "category": "sneakers",
-      "link": "https://www.nike.ae/en/structure-26-mens-road-running-shoes/198486330985.html?gad_source=1&gad_campaignid=19908453745&gbraid=0AAAAApQlL7dN928u9xDFdsEc0-CFINfsm&gclid=CjwKCAjw857RBhAgEiwAI-1yKL1LTwGybZK2RLi6ZXiec8Szx0GkWTRg1yu9514OMdW9zxhzgzkMVxoC8t0QAvD_BwE",
-      "imageUrl": "https://www.nike.ae/dw/image/v2/BDVB_PRD/on/demandware.static/-/Sites-akeneo-master-catalog/default/dw29533c84/nk/d65/2/5/b/5/d/d6525b5d_215c_4e8d_a4fd_f8fbf9bf155f.jpg?sw=700&sh=700&sm=fit&q=100&strip=false",
-      "statement": "The supportive cushioning in the Structure 26 provides steadiness for everyday road runs. A full-length ReactX midsole delivers a cushioned and stable transition from heel to toe. Plus, a tried-and-tested midfoot support system wraps around your arch and heel to provide a firm platform.",
-      "verdict": "7/10",
-      "id": "sneakers_1781023045778",
-      "createdAt": 1781023045778
-    }
-  ],
+  "sneakers": [],
   "digital": []
 }
