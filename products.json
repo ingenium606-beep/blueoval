@@ -2,6 +2,20 @@
   "fashion": [],
   "sneakers": [
     {
+      "brand": "Gucci",
+      "name": "Re-Web sneakers",
+      "price": "4500",
+      "currency": "AED",
+      "category": "sneakers",
+      "link": "https://www.levelshoes.com/gucci-re-web-sneakers-black-canvas-men-low-tops-firk9t.html?gclsrc=aw.ds&gad_source=1&gad_campaignid=17576505839&gbraid=0AAAAADSSw_EMqwzonWjEHHQjEFSbyT3vN&gclid=CjwKCAjw857RBhAgEiwAI-1yKIV0WCIVJJEOQunMSSz6jd4Z0QyuN23C2hC5pWUKZtUwf8h3uqe68hoCJKAQAvD_BwE",
+      "imageUrl": "https://assets.levelshoes.com/cdn-cgi/image/width=720,height=1008,quality=85,format=webp/media/catalog/product/7/8/787476aadhw1077_1.jpg?ts=20240629040517",
+      "statement": "The first trainers envisioned by Sabato De Sarno for the House, the Re-Web sees Gucci’s heritage stripes as a bold statement detail on a contemporary silhouette. Made from black GG canvas, leather and suede, these sneakers are defined by a rubber outsole with an Interlocking G and Gucci script logo, Gucci script and Interlocking G Web tag, stitching detailing recalling the Web, and a lace-up closure.",
+      "verdict": "7.5/10",
+      "telegramMsgId": 18,
+      "id": "sneakers_1781041965387",
+      "createdAt": 1781041965387
+    },
+    {
       "brand": "Nike",
       "name": "SB Air Force 1",
       "price": "629.00",
