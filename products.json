@@ -1,5 +1,20 @@
 {
-  "fashion": [],
+  "fashion": [
+    {
+      "brand": "Nike",
+      "name": "Dunk Low Retro",
+      "price": "599.00",
+      "currency": "AED",
+      "category": "fashion",
+      "link": "https://www.nike.ae/en/dunk-low-retro-mens-shoe/NKDD1391-100.html",
+      "imageUrl": "https://www.nike.ae/dw/image/v2/BDVB_PRD/on/demandware.static/-/Sites-akeneo-master-catalog/default/dwd69368f7/nk/0f7/6/f/7/3/e/0f76f73e_2578_4d62_abab_c5563ea4f78c.png?sw=700&sh=700&sm=fit&q=100&strip=false",
+      "statement": "This basketball icon channels '80s vibes with premium leather in the upper that looks good and breaks in even better. Modern footwear technology helps bring the comfort into the 21st century.",
+      "verdict": "9+/10",
+      "telegramMsgId": 19,
+      "id": "fashion_1781342244829",
+      "createdAt": 1781342244830
+    }
+  ],
   "sneakers": [
     {
       "brand": "Gucci",
