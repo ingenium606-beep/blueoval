@@ -344,65 +344,62 @@
   .get-btn:active { background: var(--blue-mid); transform: scale(0.98); }
 
   /* POLL */
-  .poll-card {
+  .quiz-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 4px;
-    padding: 1rem 1.2rem;
+    padding: 1.2rem;
   }
-  .poll-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 0.8rem;
+  .quiz-question {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--blue);
     text-align: center;
+    margin-bottom: 1rem;
+    line-height: 1.5;
   }
-  .poll-btns {
+  .quiz-options {
     display: flex;
-    gap: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
   }
-  .poll-btn {
+  .quiz-btn {
     flex: 1;
+    min-width: 60px;
     border: 1px solid var(--border);
     background: none;
     border-radius: 3px;
-    padding: 0.75rem;
+    padding: 0.65rem 0.5rem;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.8rem;
     font-weight: 500;
+    color: var(--blue);
     cursor: pointer;
     transition: all 0.2s;
+  }
+  .quiz-btn:active { background: var(--blue-light); transform: scale(0.97); border-color: var(--accent); }
+  .quiz-btn.scale { flex: 0 0 18%; min-width: 0; }
+  .quiz-progress {
     display: flex;
-    align-items: center;
+    gap: 4px;
     justify-content: center;
-    gap: 0.4rem;
+    margin-bottom: 1rem;
   }
-  .poll-btn.fire { color: var(--fire); border-color: rgba(232,82,58,0.25); }
-  .poll-btn.pass { color: var(--pass); border-color: rgba(107,122,141,0.25); }
-  .poll-btn.fire:active { background: rgba(232,82,58,0.08); transform: scale(0.97); }
-  .poll-btn.pass:active { background: rgba(107,122,141,0.08); transform: scale(0.97); }
-  .poll-results { display: none; }
-  .poll-bar-wrap { margin-bottom: 0.5rem; }
-  .poll-bar-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.72rem;
-    margin-bottom: 4px;
-  }
-  .poll-bar-track {
-    height: 4px;
+  .quiz-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
     background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
+    transition: background 0.2s;
   }
-  .poll-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 0.6s ease;
+  .quiz-dot.done { background: var(--accent); }
+  .quiz-dot.active { background: var(--blue); }
+  .quiz-done {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    padding: 0.5rem 0;
   }
-  .poll-bar-fill.fire-fill { background: var(--fire); }
-  .poll-bar-fill.pass-fill { background: var(--pass); }
 
   /* RECENT FEED */
   .recent-label {
@@ -628,11 +625,11 @@
 <script>
 const CHANNEL_ID = '-1003953823996';
 const BOT_TOKEN = '8731170592:AAGc6ICVUm3N7B7BhOpiu9NlRckVy1bT6yA';
+const ADMIN_ID = '6225628395';
 const PROXY = 'https://api.allorigins.win/get?url=';
 
 let currentCategory = 'fashion';
 let products = { fashion: [], sneakers: [], digital: [] };
-let votes = JSON.parse(localStorage.getItem('bo_votes') || '{}');
 let ribbonItems = [];
 let ribbonLoaded = false;
 let lastRibbonFetch = 0;
@@ -702,33 +699,7 @@ function renderCategory(cat, items, body) {
   }
   const latest = items[0];
   const voteKey = `${cat}_${latest.id}`;
-  const voted = votes[voteKey];
-  const fireCount = parseInt(localStorage.getItem(`bo_fire_${voteKey}`) || '0');
-  const passCount = parseInt(localStorage.getItem(`bo_pass_${voteKey}`) || '0');
-  const total = fireCount + passCount || 1;
-  const fireP = Math.round((fireCount / total) * 100);
-  const passP = 100 - fireP;
-
-  let pollHTML = '';
-  if (!voted) {
-    pollHTML = `
-      <div class="poll-btns">
-        <button class="poll-btn fire" onclick="vote('${voteKey}','fire')">🔥 Fire</button>
-        <button class="poll-btn pass" onclick="vote('${voteKey}','pass')">👎 Pass</button>
-      </div>`;
-  } else {
-    pollHTML = `
-      <div class="poll-results" style="display:block">
-        <div class="poll-bar-wrap">
-          <div class="poll-bar-label"><span style="color:var(--fire)">🔥 Fire</span><span>${fireP}%</span></div>
-          <div class="poll-bar-track"><div class="poll-bar-fill fire-fill" style="width:${fireP}%"></div></div>
-        </div>
-        <div class="poll-bar-wrap">
-          <div class="poll-bar-label"><span style="color:var(--pass)">👎 Pass</span><span>${passP}%</span></div>
-          <div class="poll-bar-track"><div class="poll-bar-fill pass-fill" style="width:${passP}%"></div></div>
-        </div>
-      </div>`;
-  }
+  const quizDone = localStorage.getItem(`bo_quiz_${voteKey}`);
 
   const imgSrc = latest.image || '';
 
@@ -769,22 +740,97 @@ function renderCategory(cat, items, body) {
         </div>
       </div>
     </div>
-    <div class="poll-card">
-      <div class="poll-label">Is this worth it?</div>
-      ${pollHTML}
+    <div class="quiz-card" id="quiz-card">
+      ${quizDone ? `<div class="quiz-done">Thanks for your feedback ✓</div>` : ''}
     </div>
     ${recentHTML}
     <div style="height:1rem"></div>`;
+
+  if (!quizDone) {
+    renderQuiz(cat, latest, voteKey);
+  }
 }
 
-function vote(key, choice) {
-  votes[key] = choice;
-  localStorage.setItem('bo_votes', JSON.stringify(votes));
-  const fireKey = `bo_fire_${key}`;
-  const passKey = `bo_pass_${key}`;
-  if (choice === 'fire') localStorage.setItem(fireKey, (parseInt(localStorage.getItem(fireKey)||'0')+1).toString());
-  else localStorage.setItem(passKey, (parseInt(localStorage.getItem(passKey)||'0')+1).toString());
-  loadCategory(currentCategory);
+const quizQuestions = [
+  {
+    text: 'How would you rate this product?',
+    options: ['1','2','3','4','5','6','7','8','9','10'],
+    scale: true,
+    key: 'rating'
+  },
+  {
+    text: 'Do you consider this premium or normal?',
+    options: ['Premium', 'Normal'],
+    key: 'tier'
+  },
+  {
+    text: 'Is it worth the price shown?',
+    options: ['Yes', 'No'],
+    key: 'worthIt'
+  },
+  {
+    text: 'How much of the listed price would you pay?',
+    options: ['10%', '50%', '100%'],
+    key: 'paywilling'
+  }
+];
+
+function renderQuiz(cat, product, voteKey) {
+  const card = document.getElementById('quiz-card');
+  if (!card) return;
+  let step = 0;
+  const answers = {};
+
+  function draw() {
+    const q = quizQuestions[step];
+    const dots = quizQuestions.map((_, i) => {
+      const cls = i < step ? 'done' : (i === step ? 'active' : '');
+      return `<div class="quiz-dot ${cls}"></div>`;
+    }).join('');
+
+    const btnClass = q.scale ? 'quiz-btn scale' : 'quiz-btn';
+    const optsHTML = q.options.map(opt =>
+      `<button class="${btnClass}" onclick="quizAnswer('${voteKey}',${step},'${opt}')">${opt}</button>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="quiz-progress">${dots}</div>
+      <div class="quiz-question">${q.text}</div>
+      <div class="quiz-options">${optsHTML}</div>
+    `;
+  }
+
+  window[`quizAnswer_${voteKey}`] = function(stepIdx, value) {
+    const q = quizQuestions[stepIdx];
+    answers[q.key] = value;
+    step++;
+    if (step < quizQuestions.length) {
+      draw();
+    } else {
+      finishQuiz(cat, product, voteKey, answers);
+    }
+  };
+
+  draw();
+}
+
+function quizAnswer(voteKey, stepIdx, value) {
+  const fn = window[`quizAnswer_${voteKey}`];
+  if (fn) fn(stepIdx, value);
+}
+
+function finishQuiz(cat, product, voteKey, answers) {
+  localStorage.setItem(`bo_quiz_${voteKey}`, '1');
+  const card = document.getElementById('quiz-card');
+  if (card) card.innerHTML = `<div class="quiz-done">Thanks for your feedback ✓</div>`;
+
+  const msg = `📊 New Quiz Response\n${product.brand ? product.brand + ' — ' : ''}${product.name}\n\nRating: ${answers.rating}/10\nTier: ${answers.tier}\nWorth it: ${answers.worthIt}\nWould pay: ${answers.paywilling}`;
+
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: ADMIN_ID, text: msg })
+  }).catch(() => {});
 }
 
 function trackClick(key) {
