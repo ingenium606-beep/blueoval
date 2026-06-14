@@ -1,6 +1,20 @@
 {
   "fashion": [
     {
+      "brand": "UAE",
+      "name": "Dubai",
+      "price": "0000",
+      "currency": "USD",
+      "category": "fashion",
+      "link": "https://www.travelweekly.com/Hotels/Dubai/Spotlight",
+      "imageUrl": "https://ik.imgkit.net/3vlqs5axxjf/external/ik-seo/http://images.ntmllc.com/v4/destination/United-Arab-Emirates/Dubai/255991_SCN_Dubai_iStock000012258245Small_ZBFC4A/Dubai-Scenery.jpg?tr=w-680%2Ch-404%2Cfo-auto",
+      "statement": "Test",
+      "verdict": "Test",
+      "telegramMsgId": 25,
+      "id": "fashion_1781426498673",
+      "createdAt": 1781426498673
+    },
+    {
       "brand": "Nike",
       "name": "Dunk Low Retro",
       "price": "599.00",
