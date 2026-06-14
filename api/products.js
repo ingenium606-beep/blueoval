@@ -67,7 +67,34 @@ export default async function handler(req, res) {
         return;
       }
 
-      if (action === 'delete') {
+      if (action === 'move') {
+        const { id, fromCategory, toCategory } = req.body;
+        const product = (content[fromCategory] || []).find(p => p.id === id);
+        if (product) {
+          content[fromCategory] = content[fromCategory].filter(p => p.id !== id);
+          product.category = toCategory;
+          if (!content[toCategory]) content[toCategory] = [];
+          content[toCategory].unshift(product);
+          await saveFile(content, sha);
+          res.status(200).json({ success: true });
+        } else {
+          res.status(200).json({ success: false, error: 'Product not found' });
+        }
+        return;
+      }
+
+      if (action === 'update') {
+        const { id, category, fields } = req.body;
+        const idx = (content[category] || []).findIndex(p => p.id === id);
+        if (idx !== -1) {
+          content[category][idx] = { ...content[category][idx], ...fields };
+          await saveFile(content, sha);
+          res.status(200).json({ success: true });
+        } else {
+          res.status(200).json({ success: false, error: 'Product not found' });
+        }
+        return;
+      }
         const { id, category } = req.body;
         if (content[category]) {
           content[category] = content[category].filter(p => p.id !== id);
