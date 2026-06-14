@@ -46,6 +46,12 @@
   .product-name { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 500; color: var(--blue); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .product-price { font-size: 0.75rem; color: var(--text-muted); margin-top: 1px; }
 
+  .product-controls { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; flex-wrap: wrap; }
+  .cat-select { font-size: 0.7rem; padding: 3px 6px; border: 1px solid var(--border); border-radius: 3px; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; cursor: pointer; -webkit-appearance: none; appearance: none; }
+  .star-input { display: flex; gap: 2px; }
+  .star { font-size: 1rem; cursor: pointer; color: var(--border); transition: color 0.15s; }
+  .star.filled { color: var(--accent); }
+  .star:hover { color: var(--accent); }
   .delete-btn { background: none; border: none; color: var(--error); font-size: 1.1rem; cursor: pointer; padding: 4px 6px; flex-shrink: 0; opacity: 0.7; transition: opacity 0.2s; }
   .delete-btn:active { opacity: 1; }
 
@@ -145,6 +151,7 @@ function renderList() {
   list.innerHTML = '';
   products.forEach((p, i) => {
     const sym = p.currency === 'AED' ? 'AED ' : '$';
+    const stars = p.stars || 0;
     const item = document.createElement('div');
     item.className = 'product-item';
     item.draggable = true;
@@ -157,6 +164,16 @@ function renderList() {
         <div class="product-brand">${p.brand || currentTab}</div>
         <div class="product-name">${p.name}</div>
         <div class="product-price">${sym}${p.price}</div>
+        <div class="product-controls">
+          <select class="cat-select" onchange="changeCategory('${p.id}', this.value)">
+            <option value="fashion" ${p.category === 'fashion' ? 'selected' : ''}>Fashion</option>
+            <option value="sneakers" ${p.category === 'sneakers' ? 'selected' : ''}>Sneakers</option>
+            <option value="digital" ${p.category === 'digital' ? 'selected' : ''}>Digital</option>
+          </select>
+          <div class="star-input">
+            ${[1,2,3,4,5].map(s => `<span class="star ${s <= stars ? 'filled' : ''}" onclick="setStars('${p.id}', ${s})">★</span>`).join('')}
+          </div>
+        </div>
       </div>
       <button class="delete-btn" onclick="askDelete('${p.id}', '${p.telegramMsgId || ''}')">🗑</button>
     `;
@@ -215,6 +232,37 @@ async function saveOrder() {
   }
   btn.textContent = 'Save New Order';
   btn.disabled = false;
+}
+
+async function changeCategory(id, newCategory) {
+  try {
+    await fetch('/api/products?action=move', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, fromCategory: currentTab, toCategory: newCategory })
+    });
+    showStatus(`Moved to ${newCategory}.`, 'success');
+    products = products.filter(p => p.id !== id);
+    renderList();
+  } catch(e) {
+    showStatus('Failed to move product.', 'error');
+  }
+}
+
+async function setStars(id, stars) {
+  try {
+    await fetch('/api/products?action=update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, category: currentTab, fields: { stars } })
+    });
+    const p = products.find(p => p.id === id);
+    if (p) p.stars = stars;
+    renderList();
+    showStatus('Rating saved.', 'success');
+  } catch(e) {
+    showStatus('Failed to save rating.', 'error');
+  }
 }
 
 function askDelete(id, msgId) {
