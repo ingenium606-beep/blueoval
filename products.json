@@ -18,6 +18,20 @@
   ],
   "sneakers": [
     {
+      "brand": "Skechers",
+      "name": "SUMMITS womens SPORTS",
+      "price": "116.24",
+      "currency": "AED",
+      "category": "sneakers",
+      "link": "https://www.amazon.ae/Skechers-Womens-SUMMITS-BLACK-Shoes/dp/B0DVZPLYVR/ref=sr_1_2?crid=3IU9BRNK3TMEB&dib=eyJ2IjoiMSJ9.WV0XL314zvQ9VU3Upckd3_nMaqgRiaFYCtRnq70dlEDwqwMYlVWgUzVjEyRN9XVT_shskbEMmZJuxL1Tldp-4iqp2h50Pv6snGkj13vgDcR3wc1_dnQVgMf8tGEALv2YoUrwLRZbbrzIx-rn8Fo-MxJmZtPA4xXPVU227uIsoUAq5Y76UxKVf5TlU4kydTu1kxXjx0xzg9NyW2Yf2XUfCShLTSe4gvuixpyQX2TR8bLV3j4OTa1v5G-DOlBTgLySkLHZG_il_Ym4e2QILs8_bbkviS5fXDp14l1WyCjDwGg.EcoeLBrFKkj_l0d9q_cokLi0_vQXlwfYn_63MSK1Hj4&dib_tag=se&keywords=shoes&qid=1781436605&sprefix=shoe%2Caps%2C308&sr=8-2&th=1&psc=1",
+      "imageUrl": "https://m.media-amazon.com/images/I/71JNacJY+qL._AC_SX625_.jpg",
+      "statement": "Looks fine",
+      "verdict": "Test",
+      "telegramMsgId": 26,
+      "id": "sneakers_1781436733738",
+      "createdAt": 1781436733738
+    },
+    {
       "brand": "Nike",
       "name": "Dunk Low Retro",
       "price": "599.00",
