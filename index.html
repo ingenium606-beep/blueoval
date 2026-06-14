@@ -233,13 +233,178 @@
   .cat-body {
     flex: 1;
     overflow-y: auto;
-    padding: 1.2rem;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
 
-  .hero-card {
+  /* HORIZONTAL PRODUCT ROW */
+  .h-scroll-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+  }
+  .h-scroll-wrap::-webkit-scrollbar { display: none; }
+  .h-scroll-row {
+    display: flex;
+    gap: 0.75rem;
+    width: max-content;
+  }
+  .h-card {
+    width: 130px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .h-card.active {
+    width: 160px;
+    border-color: var(--accent);
+    box-shadow: 0 4px 16px rgba(10,37,64,0.12);
+  }
+  .h-card-img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background: var(--white);
+    overflow: hidden;
+  }
+  .h-card-img img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .h-card-body { padding: 0.5rem; }
+  .h-card-brand {
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .h-card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--blue);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .h-card-price {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  .h-card-stars {
+    font-size: 0.6rem;
+    color: var(--accent);
+    margin-top: 2px;
+  }
+
+  /* DETAIL PANEL */
+  .detail-panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .detail-img-wrap {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background: var(--white);
+    overflow: hidden;
+    position: relative;
+  }
+  .detail-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .detail-badge {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: var(--blue);
+    color: var(--accent);
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+  .detail-body { padding: 1rem; }
+  .detail-brand {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+  .detail-name-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .detail-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--blue);
+    line-height: 1.2;
+    flex: 1;
+  }
+  .detail-stars {
+    font-size: 1rem;
+    color: var(--accent);
+    flex-shrink: 0;
+    padding-top: 4px;
+  }
+  .detail-statement {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .detail-verdict {
+    font-size: 0.75rem;
+    color: var(--blue);
+    font-style: italic;
+    border-left: 2px solid var(--accent);
+    padding-left: 0.7rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+  }
+  .detail-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+  .detail-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--blue);
+    line-height: 1;
+  }
+  .detail-currency {
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin-right: 2px;
+    vertical-align: super;
+  }
     background: var(--card-bg);
     border-radius: 4px;
     border: 1px solid var(--border);
@@ -697,58 +862,89 @@ function renderCategory(cat, items, body) {
       </div>`;
     return;
   }
-  const latest = items[0];
-  const voteKey = `${cat}_${latest.id}`;
-  const quizDone = localStorage.getItem(`bo_quiz_${voteKey}`);
 
-  const imgSrc = latest.image || '';
+  let selectedIdx = 0;
 
-  let recentHTML = '';
-  if (items.length > 1) {
-    recentHTML = `<div class="recent-label">Recent picks</div>`;
-    items.slice(1).forEach(item => {
-      const rImg = item.image || `https://via.placeholder.com/56x56/E8F0FB/0A2540?text=•`;
-      recentHTML += `
-        <div class="recent-item" onclick="openLink('${item.link}')">
-          <img class="recent-thumb" src="${rImg}" alt="${item.name}" onerror="this.style.background='var(--blue-light)'">
-          <div class="recent-info">
-            <div class="recent-brand">${item.brand || cat}</div>
-            <div class="recent-name">${item.name}</div>
-            <div class="recent-price">${item.currency === 'AED' ? 'AED ' : '$'}${item.price}</div>
+  function getStars(stars) {
+    if (!stars) return '';
+    return '★'.repeat(stars) + '☆'.repeat(5 - stars);
+  }
+
+  function renderCards() {
+    return items.map((item, i) => {
+      const sym = item.currency === 'AED' ? 'AED ' : '$';
+      const isActive = i === selectedIdx;
+      return `
+        <div class="h-card ${isActive ? 'active' : ''}" onclick="selectProduct(${i})">
+          <div class="h-card-img">
+            <img src="${item.image || ''}" alt="${item.name}" onerror="this.style.display='none'">
           </div>
-          <div class="recent-arrow">›</div>
+          <div class="h-card-body">
+            <div class="h-card-brand">${item.brand || cat}</div>
+            <div class="h-card-name">${item.name}</div>
+            <div class="h-card-price">${sym}${item.price}</div>
+            ${item.stars ? `<div class="h-card-stars">${getStars(item.stars)}</div>` : ''}
+          </div>
         </div>`;
-    });
+    }).join('');
+  }
+
+  function renderDetail() {
+    const item = items[selectedIdx];
+    const sym = item.currency === 'AED' ? 'AED ' : '$';
+    const voteKey = `${cat}_${item.id}`;
+    const quizDone = localStorage.getItem(`bo_quiz_${voteKey}`);
+    return `
+      <div class="detail-panel">
+        <div class="detail-img-wrap">
+          <img src="${item.image || ''}" alt="${item.name}" onerror="this.style.display='none'">
+          <div class="detail-badge">${selectedIdx === 0 ? 'Latest pick' : 'Pick #' + (selectedIdx + 1)}</div>
+        </div>
+        <div class="detail-body">
+          <div class="detail-brand">${item.brand || categoryMeta[cat].label}</div>
+          <div class="detail-name-row">
+            <div class="detail-name">${item.name}</div>
+            ${item.stars ? `<div class="detail-stars">${getStars(item.stars)}</div>` : ''}
+          </div>
+          ${item.statement ? `<div class="detail-statement">${item.statement}</div>` : ''}
+          ${item.verdict ? `<div class="detail-verdict">${item.verdict}</div>` : ''}
+          <div class="detail-footer">
+            <div class="detail-price">
+              <span class="detail-currency">${sym}</span>${item.price || '—'}
+            </div>
+            ${item.link ? `<a class="get-btn" href="${item.link}" target="_blank" onclick="trackClick('${voteKey}')">Get it →</a>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="quiz-card" id="quiz-card-${selectedIdx}">
+        ${quizDone ? `<div class="quiz-done">Thanks for your feedback ✓</div>` : ''}
+      </div>`;
   }
 
   body.innerHTML = `
-    <div class="hero-card">
-      <div class="hero-img-wrap">
-        <img src="${imgSrc}" alt="${latest.name}" style="width:100%;height:100%;object-fit:cover;display:block" onerror="this.style.display='none'">
-        <div class="hero-badge">Latest pick</div>
-      </div>
-      <div class="hero-body">
-        <div class="hero-brand">${latest.brand || categoryMeta[cat].label}</div>
-        <div class="hero-name">${latest.name}</div>
-        ${latest.statement ? `<div class="hero-statement">${latest.statement}</div>` : ''}
-        ${latest.verdict ? `<div class="hero-verdict">${latest.verdict}</div>` : ''}
-        <div class="hero-footer">
-          <div class="hero-price">
-            <span class="hero-currency">${latest.currency === 'AED' ? 'AED ' : '$'}</span>${latest.price || '—'}
-          </div>
-          ${latest.link ? `<a class="get-btn" href="${latest.link}" target="_blank" onclick="trackClick('${voteKey}')">Get it →</a>` : ''}
-        </div>
-      </div>
+    <div class="h-scroll-wrap">
+      <div class="h-scroll-row" id="h-scroll-row">${renderCards()}</div>
     </div>
-    <div class="quiz-card" id="quiz-card">
-      ${quizDone ? `<div class="quiz-done">Thanks for your feedback ✓</div>` : ''}
-    </div>
-    ${recentHTML}
+    <div id="detail-container">${renderDetail()}</div>
     <div style="height:1rem"></div>`;
 
-  if (!quizDone) {
-    renderQuiz(cat, latest, voteKey);
+  // Render quiz for selected product
+  const selected = items[selectedIdx];
+  const voteKey = `${cat}_${selected.id}`;
+  if (!localStorage.getItem(`bo_quiz_${voteKey}`)) {
+    renderQuiz(cat, selected, voteKey, `quiz-card-${selectedIdx}`);
   }
+
+  window.selectProduct = function(idx) {
+    selectedIdx = idx;
+    document.getElementById('h-scroll-row').innerHTML = renderCards();
+    document.getElementById('detail-container').innerHTML = renderDetail();
+    const newSelected = items[selectedIdx];
+    const newVoteKey = `${cat}_${newSelected.id}`;
+    if (!localStorage.getItem(`bo_quiz_${newVoteKey}`)) {
+      renderQuiz(cat, newSelected, newVoteKey, `quiz-card-${selectedIdx}`);
+    }
+  };
 }
 
 const quizQuestions = [
@@ -775,8 +971,9 @@ const quizQuestions = [
   }
 ];
 
-function renderQuiz(cat, product, voteKey) {
-  const card = document.getElementById('quiz-card');
+function renderQuiz(cat, product, voteKey, cardId) {
+  cardId = cardId || 'quiz-card';
+  const card = document.getElementById(cardId);
   if (!card) return;
   let step = 0;
   const answers = {};
@@ -807,7 +1004,7 @@ function renderQuiz(cat, product, voteKey) {
     if (step < quizQuestions.length) {
       draw();
     } else {
-      finishQuiz(cat, product, voteKey, answers);
+      finishQuiz(cat, product, voteKey, answers, cardId);
     }
   };
 
@@ -819,9 +1016,9 @@ function quizAnswer(voteKey, stepIdx, value) {
   if (fn) fn(stepIdx, value);
 }
 
-function finishQuiz(cat, product, voteKey, answers) {
+function finishQuiz(cat, product, voteKey, answers, cardId) {
   localStorage.setItem(`bo_quiz_${voteKey}`, '1');
-  const card = document.getElementById('quiz-card');
+  const card = document.getElementById(cardId || 'quiz-card');
   if (card) card.innerHTML = `<div class="quiz-done">Thanks for your feedback ✓</div>`;
 
   const msg = `📊 New Quiz Response\n${product.brand ? product.brand + ' — ' : ''}${product.name}\n\nRating: ${answers.rating}/10\nTier: ${answers.tier}\nWorth it: ${answers.worthIt}\nWould pay: ${answers.paywilling}`;
@@ -898,6 +1095,13 @@ function applyRibbon() {
 }
 
 loadRibbon();
+
+// Handle ?category= URL parameter from Rate It button
+const urlParams = new URLSearchParams(window.location.search);
+const urlCategory = urlParams.get('category');
+if (urlCategory && ['fashion','sneakers','digital'].includes(urlCategory)) {
+  goCategory(urlCategory);
+}
 </script>
 </body>
 </html>
