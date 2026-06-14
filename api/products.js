@@ -5,61 +5,53 @@ const REPO = process.env.GITHUB_REPO;
 const FILE_PATH = 'products.json';
 const BRANCH = 'main';
 
-function httpsRequest(options, body) {
+function githubRequest(method, path, body) {
   return new Promise((resolve, reject) => {
+    const bodyStr = body ? JSON.stringify(body) : null;
+    const options = {
+      hostname: 'api.github.com',
+      path,
+      method,
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'blueoval-app',
+        'Content-Type': 'application/json'
+      }
+    };
+    if (bodyStr) options.headers['Content-Length'] = Buffer.byteLength(bodyStr);
     const req = https.request(options, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
-        try { resolve({ status: res.statusCode, body: JSON.parse(data) }); }
-        catch(e) { resolve({ status: res.statusCode, body: data }); }
+        try { resolve(JSON.parse(data)); }
+        catch(e) { resolve({}); }
       });
     });
     req.on('error', reject);
-    if (body) req.write(body);
+    if (bodyStr) req.write(bodyStr);
     req.end();
   });
 }
 
 async function getFile() {
-  const res = await httpsRequest({
-    hostname: 'api.github.com',
-    path: `/repos/${REPO}/contents/${FILE_PATH}`,
-    method: 'GET',
-    headers: {
-      'Authorization': `token ${GITHUB_TOKEN}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'User-Agent': 'blueoval-app'
-    }
-  });
-  if (res.status === 404) return { content: { fashion: [], sneakers: [], digital: [] }, sha: null };
-  const content = JSON.parse(Buffer.from(res.body.content, 'base64').toString('utf8'));
-  return { content, sha: res.body.sha };
+  const data = await githubRequest('GET', `/repos/${REPO}/contents/${FILE_PATH}`);
+  if (!data.content) return { content: { fashion: [], sneakers: [], digital: [] }, sha: null };
+  const content = JSON.parse(Buffer.from(data.content, 'base64').toString('utf8'));
+  return { content, sha: data.sha };
 }
 
 async function saveFile(content, sha) {
-  const bodyObj = {
+  const body = {
     message: 'Update products',
     content: Buffer.from(JSON.stringify(content, null, 2)).toString('base64'),
     branch: BRANCH
   };
-  if (sha) bodyObj.sha = sha;
-  const bodyStr = JSON.stringify(bodyObj);
-  await httpsRequest({
-    hostname: 'api.github.com',
-    path: `/repos/${REPO}/contents/${FILE_PATH}`,
-    method: 'PUT',
-    headers: {
-      'Authorization': `token ${GITHUB_TOKEN}`,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(bodyStr),
-      'User-Agent': 'blueoval-app'
-    }
-  }, bodyStr);
+  if (sha) body.sha = sha;
+  await githubRequest('PUT', `/repos/${REPO}/contents/${FILE_PATH}`, body);
 }
 
-module.exports = async function handler(req, res) {
+module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -69,11 +61,7 @@ module.exports = async function handler(req, res) {
     if (req.method === 'GET') {
       const { category } = req.query;
       const { content } = await getFile();
-      if (category) {
-        res.status(200).json({ products: content[category] || [], success: true });
-      } else {
-        res.status(200).json({ ...content, success: true });
-      }
+      res.status(200).json({ products: category ? (content[category] || []) : content, success: true });
       return;
     }
 
@@ -92,9 +80,7 @@ module.exports = async function handler(req, res) {
 
       if (action === 'delete') {
         const { id, category } = req.body;
-        if (content[category]) {
-          content[category] = content[category].filter(p => p.id !== id);
-        }
+        if (content[category]) content[category] = content[category].filter(p => p.id !== id);
         await saveFile(content, sha);
         res.status(200).json({ success: true });
         return;
