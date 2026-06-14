@@ -269,7 +269,7 @@
   }
   .h-card-img {
     width: 100%;
-    aspect-ratio: 1/1;
+    height: 100px;
     background: var(--white);
     overflow: hidden;
   }
@@ -316,7 +316,7 @@
   }
   .detail-img-wrap {
     width: 100%;
-    aspect-ratio: 1/1;
+    height: 200px;
     background: var(--white);
     overflow: hidden;
     position: relative;
@@ -411,7 +411,7 @@
   }
   .hero-img-wrap {
     width: 100%;
-    aspect-ratio: 1/1;
+    height: 200px;
     background: var(--white);
     overflow: hidden;
     position: relative;
@@ -843,7 +843,8 @@ async function loadCategory(cat) {
       price: p.price || '',
       currency: p.currency || 'USD',
       link: p.link || '',
-      image: p.imageUrl || null
+      image: p.imageUrl || null,
+      stars: p.stars || 0
     }));
     products[cat] = items;
     document.getElementById('cat-count').textContent = items.length > 0 ? `${items.length} picks` : 'Latest picks';
