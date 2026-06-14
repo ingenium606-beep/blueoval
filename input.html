@@ -134,8 +134,9 @@
       </div>
     </div>
     <div class="field">
-      <label>Category</label>
+      <label>Category <span style="color:var(--error)">*</span></label>
       <select id="category">
+        <option value="" disabled selected>Select a category...</option>
         <option value="fashion">Fashion</option>
         <option value="sneakers">Sneakers</option>
         <option value="digital">Digital</option>
@@ -224,6 +225,8 @@ function showPreview() {
 
   if (!name || !price) { showStatus('Please fill in at least product name and price.', 'error'); return; }
   if (!statement) { showStatus('Please write a product statement.', 'error'); return; }
+  const category = document.getElementById('category').value;
+  if (!category) { showStatus('Please select a category before posting.', 'error'); return; }
 
   const sym = currency === 'AED' ? 'AED ' : '$';
   document.getElementById('prev-img').src = imgUrl || '';
@@ -256,9 +259,13 @@ async function approveAndPost() {
 
   const caption = `*${brand ? brand.toUpperCase() : ''}*\n\n*${name}*\n\n${statement}\n\n_${verdict}_\n\n*${sym}${price}*`;
 
-  const inlineKeyboard = link ? {
-    inline_keyboard: [[{ text: 'Get It →', url: link }]]
-  } : undefined;
+  const miniAppUrl = `https://project-vfi65.vercel.app?category=${category}`;
+  const inlineKeyboard = {
+    inline_keyboard: [
+      [{ text: '⭐ Rate It', url: miniAppUrl }],
+      [{ text: 'Get It →', url: link || miniAppUrl }]
+    ]
+  };
 
   try {
     let telegramMsgId = null;
