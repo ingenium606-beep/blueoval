@@ -117,9 +117,6 @@
 </div>
 
 <script>
-const BOT_TOKEN = '8731170592:AAGc6ICVUm3N7B7BhOpiu9NlRckVy1bT6yA';
-const CHANNEL_ID = '-1003953823996';
-
 let currentTab = 'fashion';
 let products = [];
 let pendingDelete = null;
@@ -288,13 +285,18 @@ async function confirmDelete() {
       body: JSON.stringify({ id, category: currentTab })
     });
 
-    // Delete from Telegram channel
+    // Delete from Telegram channel (handled server-side — the bot
+    // token never touches the browser)
     if (msgId) {
-      await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/deleteMessage`, {
+      const tgRes = await fetch('/api/telegram-delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHANNEL_ID, message_id: parseInt(msgId) })
+        body: JSON.stringify({ message_id: msgId })
       });
+      const tgData = await tgRes.json();
+      if (!tgData.ok) {
+        showStatus(`Deleted from BlueOval, but Telegram post removal failed: ${tgData.reason || 'unknown error'}`, 'error');
+      }
     }
 
     products = products.filter(p => p.id !== id);
