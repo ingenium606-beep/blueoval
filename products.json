@@ -2,6 +2,20 @@
   "fashion": [],
   "sneakers": [
     {
+      "brand": "Nike",
+      "name": "ACG Zegama Trail",
+      "price": "899",
+      "currency": "AED",
+      "category": "sneakers",
+      "link": "https://www.nike.ae/en/acg-zegama-mens-trail-running-shoes/NKHV8113-300.html",
+      "imageUrl": "https://www.nike.ae/dw/image/v2/BDVB_PRD/on/demandware.static/-/Sites-akeneo-master-catalog/default/dw433adb5f/nk/8b2/d/b/c/d/2/8b2dbcd2_611a_445d_8789_a90c4a629820.png?sw=700&sh=700&sm=fit&q=100&strip=false",
+      "statement": "A trusted trail runner takes its rightful place in ACG. And it arrives with some all-conditions upgrades.The light and ultra-cushioned ACG Zegama combines grippy traction and more room for your toes to provide lasting comfort and control on rugged, off-road terrain. Steep climbs, hairpin switchbacks, barreling descentsthe Zegamas built to tackle it all. Are you?",
+      "verdict": "A Class",
+      "telegramMsgId": 27,
+      "id": "sneakers_1788721726552",
+      "createdAt": 1788721726552
+    },
+    {
       "brand": "Skechers",
       "name": "SUMMITS womens SPORTS",
       "price": "116.24",
