@@ -97,6 +97,17 @@
 
 <div class="body">
 
+  <!-- QUICK ADD: paste a product URL to auto-fill Step 1 -->
+  <div class="card" id="quick-add-card">
+    <div class="card-title">Quick Add — Paste a Product Link</div>
+    <div class="field">
+      <label>Product Page URL</label>
+      <input type="url" id="quick-url" placeholder="https://www.brandsite.com/product/...">
+    </div>
+    <button class="preview-btn" id="quick-fetch-btn" onclick="quickFetch()">Fetch Product Details</button>
+    <div class="char-count" id="quick-fetch-status" style="text-align:left; margin-top:0.5rem;"></div>
+  </div>
+
   <!-- STEP 1: PRODUCT DETAILS -->
   <div class="card">
     <div class="card-title">Step 1 — Product Details</div>
@@ -191,9 +202,6 @@
 </div>
 
 <script>
-const BOT_TOKEN = '8731170592:AAGc6ICVUm3N7B7BhOpiu9NlRckVy1bT6yA';
-const CHANNEL_ID = '-1003953823996';
-
 function updateCharCount(fieldId, countId) {
   const len = document.getElementById(fieldId).value.length;
   const max = fieldId === 'statement' ? 300 : 100;
@@ -241,6 +249,57 @@ function showPreview() {
   document.getElementById('preview-section').scrollIntoView({ behavior: 'smooth' });
 }
 
+async function quickFetch() {
+  const url = document.getElementById('quick-url').value.trim();
+  const statusEl = document.getElementById('quick-fetch-status');
+  const btn = document.getElementById('quick-fetch-btn');
+
+  if (!url) {
+    statusEl.textContent = 'Paste a product URL first.';
+    statusEl.style.color = 'var(--error)';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Fetching...';
+  statusEl.textContent = '';
+
+  try {
+    const r = await fetch(`/api/fetch?url=${encodeURIComponent(url)}`);
+    const d = await r.json();
+
+    // Defensive field mapping — /api/fetch's exact response shape wasn't
+    // confirmed when this was built, so a few common key name variants
+    // are checked. If auto-fill comes back empty, the actual response
+    // shape from fetch.js needs to be checked against this list.
+    const title = d.title || d.name || d.productName || '';
+    const image = d.image || d.imageUrl || d.imageURL || d.ogImage || '';
+    const brand = d.brand || d.brandName || d.site || '';
+    const price = d.price || d.amount || '';
+
+    if (!title && !image && !price) {
+      statusEl.textContent = 'Could not extract product details from that page. Fill in the fields manually below.';
+      statusEl.style.color = 'var(--error)';
+    } else {
+      document.getElementById('product-name').value = title;
+      document.getElementById('image-url').value = image;
+      document.getElementById('brand').value = brand;
+      if (price) document.getElementById('price').value = String(price).replace(/[^0-9.]/g, '');
+      document.getElementById('affiliate-link').value = url;
+      previewImage(image);
+      statusEl.textContent = '✓ Fields auto-filled — review below, then add your statement and verdict.';
+      statusEl.style.color = 'var(--success)';
+      document.getElementById('brand')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  } catch (e) {
+    statusEl.textContent = 'Fetch failed. Check the URL and try again, or fill in fields manually.';
+    statusEl.style.color = 'var(--error)';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Fetch Product Details';
+}
+
 async function approveAndPost() {
   const btn = document.getElementById('approve-btn');
   btn.disabled = true;
@@ -268,43 +327,28 @@ async function approveAndPost() {
   };
 
   try {
-    let telegramMsgId = null;
-    if (imageUrl) {
-      const body = { chat_id: CHANNEL_ID, photo: imageUrl, caption, parse_mode: 'Markdown' };
-      if (inlineKeyboard) body.reply_markup = inlineKeyboard;
-      const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      const d = await r.json();
-      if (d.ok) telegramMsgId = d.result.message_id;
-    }
-    if (!telegramMsgId) {
-      const body = { chat_id: CHANNEL_ID, text: caption, parse_mode: 'Markdown' };
-      if (inlineKeyboard) body.reply_markup = inlineKeyboard;
-      const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      const d = await r.json();
-      if (d.ok) telegramMsgId = d.result.message_id;
-    }
-    if (telegramMsgId) {
+    const body = { caption, imageUrl: imageUrl || null, replyMarkup: inlineKeyboard };
+    const r = await fetch('/api/telegram-post', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const d = await r.json();
+
+    if (d.ok && d.message_id) {
       // Save to database with Telegram message ID
       await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ brand, name, price, currency, category, link, imageUrl, statement, verdict, telegramMsgId })
+        body: JSON.stringify({ brand, name, price, currency, category, link, imageUrl, statement, verdict, telegramMsgId: d.message_id })
       });
       showStatus('✓ Posted successfully to BlueOval!', 'success');
       btn.textContent = '✓ Posted!';
     } else {
-      throw new Error('Post failed');
+      throw new Error(d.reason || 'Post failed');
     }
   } catch(e) {
-    showStatus('Failed to post. Check your connection and try again.', 'error');
+    showStatus(`Failed to post: ${e.message || 'check your connection and try again.'}`, 'error');
     btn.disabled = false;
     btn.textContent = '✓ Approve & Post to BlueOval';
   }
