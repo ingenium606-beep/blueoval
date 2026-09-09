@@ -1,5 +1,20 @@
 {
   "fashion": [],
-  "sneakers": [],
+  "sneakers": [
+    {
+      "brand": "Nike",
+      "name": "Buy Nike Running Multicolour Air Zoom Pegasus 41 GORE-TEX Sneakers For Men Online | Ounass UAE",
+      "price": "375.00",
+      "currency": "AED",
+      "category": "sneakers",
+      "link": "https://www.ounass.ae/shop-nike-running-air-zoom-pegasus-41-gore-tex-sneakers-for-men-218922484_195.html?utm_source=google&utm_medium=cpc&utm_id=23959083496&gad_source=1&gad_campaignid=23959083496&gbraid=0AAAAADSMPX5IDDo-WzGcSDXbGTkk426sw&gclid=Cj0KCQjwh4TVBhCWARIsAG0czmropTY0IQcmcP9ctD42UJTfBR8PLi-zj0q3J2jZs2uQMmRMDYtHxyMaAue_EALw_wcB",
+      "imageUrl": "https://ounass-ae.atgcdn.ae/small_light(dw=240,of=webp)/pub/media/catalog/product//ounass-ae.atgcdn.ae/small_light(dw=240,of=webp)/pub/media/catalog/product/2/1/218922484_multi_in.jpg?ts=1763140649.3058",
+      "statement": "As described",
+      "verdict": "",
+      "telegramMsgId": 28,
+      "id": "sneakers_1788937825311",
+      "createdAt": 1788937825311
+    }
+  ],
   "digital": []
 }
